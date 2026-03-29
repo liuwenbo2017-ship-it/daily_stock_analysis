@@ -88,9 +88,7 @@ EXPOSE 8000
 VOLUME ["/app/data", "/app/logs", "/app/reports"]
 
 # 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || curl -f http://localhost:8000/health \
-    || python -c "import sys; sys.exit(0)"
+
 
 # 启动 FastAPI 服务（直接硬编码，不依赖外部脚本）
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
