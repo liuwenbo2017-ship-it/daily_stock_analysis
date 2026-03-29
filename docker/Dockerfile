@@ -38,7 +38,7 @@ WORKDIR /app
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 安装系统依赖（wkhtmltopdf 含 wkhtmltoimage，用于 Markdown 转图片）
+# 安装系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     curl \
@@ -71,10 +71,6 @@ COPY --from=web-builder /app/static ./static/
 # 验证前端文件存在
 RUN ls -la ./static/ && test -f ./static/index.html
 
-# 复制启动脚本
-COPY docker/start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
 # 创建数据目录
 RUN mkdir -p /app/data /app/logs /app/reports
 
@@ -91,10 +87,10 @@ EXPOSE 8000
 # 数据卷（持久化数据）
 VOLUME ["/app/data", "/app/logs", "/app/reports"]
 
-# 健康检查（FastAPI 模式）
+# 健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/api/health || curl -f http://localhost:8000/health \
     || python -c "import sys; sys.exit(0)"
 
-# 默认命令
+# 启动 FastAPI 服务（直接硬编码，不依赖外部脚本）
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
