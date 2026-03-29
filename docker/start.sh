@@ -15,6 +15,7 @@ fi
 
 echo "Frontend files found, starting server..."
 
-# 启动服务
-echo "Starting API server on port ${API_PORT:-8000}..."
-exec python main.py --serve-only --host 0.0.0.0 --port ${API_PORT:-8000}
+# 启动 FastAPI 服务
+# 使用 uvicorn 启动 server:app（server.py 中的 app 对象）
+echo "Starting FastAPI server on port ${API_PORT:-8000}..."
+exec uvicorn server:app --host 0.0.0.0 --port ${API_PORT:-8000}
